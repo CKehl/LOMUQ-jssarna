@@ -129,8 +129,8 @@ try:
     
     
     class MonteCarloDropout(keras.layers.Dropout):
-      def call(self, inputs):
-        return super().call(inputs, training=True)
+        def call(self, inputs):
+            return super().call(inputs, training=True)
     
     samples, timesteps,rows, columns, features = np.shape(X1_train) 
     

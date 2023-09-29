@@ -11,7 +11,10 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.models import Sequential
 from keras.layers.convolutional import Conv3D
 from keras.layers.convolutional_recurrent import ConvLSTM2D
-from keras.layers.normalization import BatchNormalization
+try:
+    from keras.layers.normalization import BatchNormalization
+except:
+    from keras.layers.normalization.batch_normalization import BatchNormalization
 import numpy as np
 import pylab as plt
 from tensorflow.keras import layers
@@ -46,11 +49,14 @@ def normalize(t):
     
     return t_normalize
 
+# dir_out = "/data/LOMUQ/jssarna"
+dir_out = "/media/christian/DATA/data/LOMUQ/out"
+# dir_path = "/data/LOMUQ/jssarna"
+dir_path = "/media/christian/DATA/data/LOMUQ/processed"
+
 try:
-    
-    dir_path = "/data/LOMUQ/jssarna"
     #/data/LOMUQ/jssarna/data_topios.h5', 'r'
-    #particleDensity = h5py.File(r'D:\TOPIOS Data\data\twentyone\data_topios.h5', 'r')
+    #particleDensity = h5py.File(str(dir_path)+"/data_topios.h5", 'r')
     particleCountList = h5py.File(str(dir_path)+"/particleCountList.h5", 'r')
     hydrodynamic_U_dataList = h5py.File(str(dir_path)+"/hydrodynamic_U_dataList.h5", 'r')
     hydrodynamic_V_dataList = h5py.File(str(dir_path)+"/hydrodynamic_V_dataList.h5", 'r')
@@ -76,7 +82,7 @@ try:
     
     test_Y = particleCountList[-1] 
     
-    if len(shape(test_Y))<= 3:
+    if len(test_Y.shape)<= 3:
         
         test_U = np.expand_dims(test_U,axis=0)
         test_V = np.expand_dims(test_V,axis=0)
@@ -132,7 +138,7 @@ try:
       def call(self, inputs):
         return super().call(inputs, training=True)
     
-    samples, timesteps,rows, columns, features = shape(X1_train) 
+    samples, timesteps,rows, columns, features = X1_train.shape
     
     visible1 = Input(shape=(None, rows, columns, features))
     
@@ -177,8 +183,7 @@ try:
     batch_size =1
     
     Early_stopping = EarlyStopping(monitor='val_loss',patience=5)
-    
-    modelCheckpoint = ModelCheckpoint('/data/LOMUQ/jssarna/best_version1.hdf5', save_best_only = True)
+    modelCheckpoint = ModelCheckpoint(os.path.join(dir_out, "best_version1.hdf5"), save_best_only = True)
     
     # Fit the model to the training data.
     h_callback = model.fit(
@@ -190,10 +195,11 @@ try:
         shuffle = True,
         callbacks=[Early_stopping,modelCheckpoint]
         )
-    
-        model.save("/data/LOMUQ/jssarna/BestModel_sept.hdf5")
-except:    
-    with open("/data/LOMUQ/jssarna/exceptions1.log", "a") as logfile:
+    model.save(os.path.join(dir_out, "BestModel_sept.hdf5"))
+
+except:
+    import traceback
+    with open(os.path.join(dir_out, "exceptions1.log"), "a") as logfile:
         traceback.print_exc(file=logfile)
     raise
 

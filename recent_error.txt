@@ -1,0 +1,21 @@
+Unable to allocate 1.72 GiB for an array with shape (178, 10, 360, 720, 1) and data type float32
+
+=> raise swap
+
+
+
+
+tensorflow.python.framework.errors_impl.InternalError:  Failed to load in-memory CUBIN: CUDA_ERROR_NO_BINARY_FOR_GPU: no kernel image is available for execution on the device
+	 [[node mean_absolute_error/Abs (defined at /git/LOMUQ-jssarna/LOMUQ_main.py:219) ]] [Op:__inference_train_function_20638]
+
+2023-09-15 20:06:27.506494: W tensorflow/core/kernels/data/generator_dataset_op.cc:107] Error occurred when finalizing GeneratorDataset iterator: Failed precondition: Python interpreter state is not initialized. The process may be terminated.
+	 [[{{node PyFunc}}]]
+
+=> try the non-gpu tensor flow => works => Q: why does GPU not work ?!
+=> investigate the training function - perhaps try some default network on this setup first
+
+
+Traceback (most recent call last):
+  File "/media/christian/DATA/git/LOMUQ-jssarna/LOMUQ_main.py", line 237, in <module>
+    with open(mhistfile.format(epoch=epochs), 'wb') as file:
+FileNotFoundError: [Errno 2] No such file or directory: '/media/christian/DATA/data/LOMUQ/out/output/reCT_epoch_0030_Thist.pkl'
